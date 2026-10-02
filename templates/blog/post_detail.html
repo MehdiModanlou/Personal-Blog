@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }}</title>
+</head>
+<body>
+
+    <article>
+        <h1>{{ post.title }}</h1>
+
+        <p>
+            By
+            <a href="{% url 'accounts:userprofile' post.author.username %}">
+                {{ post.author.username }}
+            </a>
+            | Published: {{ post.published }}
+        </p>
+        <p>
+            Categories:
+            {% for category in post.categories.all %}
+                <a href="{% url 'blog:category_slug' category.slug %}">
+                    {{ category.name }}
+                </a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No categories
+            {% endfor %}
+        </p>
+
+        <div>
+            {{ post.body }}
+            <a href="{% url 'blog:comment_create' post.pk %}">
+                Add a Comment
+            </a>
+            <h2>Comments</h2>
+
+            {% for comment in comments %} <p> <strong>{{ comment.author.username }}</strong> </p>
+
+            
+            <p>{{ comment.body }}</p>
+
+            <small>{{ comment.created }}</small>
+
+            {% if user == comment.author %}
+                <p>
+                    <a href="{% url 'blog:comment_update' comment.pk %}">
+                        Edit Comment
+                    </a>
+                    |
+                    <a href="{% url 'blog:comment_delete' comment.pk %}">
+                        Delete Comment
+                    </a>
+                </p>
+            {% endif %}
+            
+            <hr>
+            
+            
+            {% empty %} <p>No comments yet.</p>
+            {% endfor %}
+            
+            {% if comments_page.has_previous %} <a href="?page={{ comments_page.previous_page_number }}">
+            Previous </a>
+            {% endif %}
+            
+            <span>
+                Page {{ comments_page.number }} of {{ comments_page.paginator.num_pages }}
+            </span>
+
+            {% if comments_page.has_next %} <a href="?page={{ comments_page.next_page_number }}">
+            Next </a>
+            {% endif %}
+
+        </div>
+    </article>
+    {% if user == post.author %}
+        <p>
+            <a href="{% url 'blog:post_update' post.pk %}">
+                Edit Post
+            </a>
+        </p>
+
+        <p>
+            <a href="{% url 'blog:post_delete' post.pk %}">
+                Delete Post
+            </a>
+        </p>
+    {% endif %}
+        <a href="{% url 'blog:post_list' %}">Back to all posts</a>
+    </p>
+
+</body>
+</html>

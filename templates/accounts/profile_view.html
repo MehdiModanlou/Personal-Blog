@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ object.username }}'s Profile</title>
+</head>
+<body>
+
+<h1>{{ object.username }}'s Profile</h1>
+
+<p>
+    <strong>Username:</strong> {{ object.username }}
+</p>
+
+<p>
+    <strong>First Name:</strong> {{ object.first_name }}
+</p>
+
+<p>
+    <strong>Last Name:</strong> {{ object.last_name }}
+</p>
+
+<p>
+    <strong>Email:</strong> {{ object.email }}
+</p>
+
+<hr>
+
+<h2>Posts by {{ object.username }}</h2>
+
+{% for post in object.blog_posts.all %}
+    <article>
+        <h3>
+            <a href="{% url 'blog:post_detail' post.pk %}">
+                {{ post.title }}
+            </a>
+        </h3>
+        <p>{{ post.body }}</p>
+    </article>
+{% empty %}
+    <p>This user has no posts yet.</p>
+{% endfor %}
+
+<p>
+    <a href="{% url 'blog:post_list' %}">
+        Back to Blog
+    </a>
+</p>
+
+</body>
+</html>

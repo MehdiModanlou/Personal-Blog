@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Posts</title>
+</head>
+<body>
+
+<h1>Search Posts</h1>
+
+<form method="get" action="{% url 'blog:post_search' %}">
+    <input
+        type="text"
+        name="q"
+        value="{{ request.GET.q|default:'' }}"
+        placeholder="Search posts..."
+    >
+    <button type="submit">Search</button>
+</form>
+
+{% if request.GET.q %}
+    <h2>Results for "{{ request.GET.q }}"</h2>
+{% else %}
+    <h2>All Results</h2>
+{% endif %}
+
+{% for post in object_list %}
+    <article>
+        <h3>
+            <a href="{% url 'blog:post_detail' post.pk %}">
+                {{ post.title }}
+            </a>
+        </h3>
+
+        <p>
+            By
+            <a href="{% url 'accounts:userprofile' post.author.username %}">
+                {{ post.author.username }}
+            </a>
+            | Published: {{ post.published }}
+        </p>
+
+        <p>{{ post.body }}</p>
+    </article>
+
+    <hr>
+{% empty %}
+    <p>No posts found.</p>
+{% endfor %}
+
+{% if is_paginated %}
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
+        {% endif %}
+
+        <span>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">
+                Next
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<p>
+    <a href="{% url 'blog:post_list' %}">
+        Back to all posts
+    </a>
+</p>
+
+
+</body>
+</html>
